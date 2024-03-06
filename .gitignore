@@ -3,6 +3,7 @@ test.sh
 .luarc.json
 nvim
 .github
+github
 
 spell/
 lazy-lock.json
