@@ -71,8 +71,7 @@ vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { nor
 vim.g.mapleader = ','
 
 --Sets the keymaps open diagnostic on error I am on
-vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>',
-    { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>d', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
 
 --Sets the keymaps to replace name of variables at once
 vim.keymap.set('n', '<leader>r', ':%s/')
@@ -235,7 +234,7 @@ require('lazy').setup {
 
                     -- Fuzzy find all the symbols in your current document.
                     --  Symbols are things like variables, functions, types, etc.
-                    map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+                    -- map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 
                     -- Fuzzy find all the symbols in your current workspace
                     --  Similar to document symbols, except searches over your whole project.
