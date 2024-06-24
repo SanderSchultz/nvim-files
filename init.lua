@@ -219,7 +219,7 @@ require('lazy').setup {
 
             --Opens fuzzy finder for files related to Git
             vim.keymap.set('n', '<C-p>', builtin.git_files, {})
-            vim.keymap.set('n', '/', builtin.current_buffer_fuzzy_find, {})
+            vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
         end,
     },
 
