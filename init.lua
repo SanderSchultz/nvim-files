@@ -441,6 +441,7 @@ require('lazy').setup {
     -- NOTE: Note -- NOTE:
     -- TODO: Todo -- TODO:
     -- FIXME: Fix me --FIXME:
+    -- WARNING: Warning -- WARNING:
 
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
