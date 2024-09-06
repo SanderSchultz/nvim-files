@@ -251,6 +251,10 @@ require('lazy').setup {
       }
     },
 
+	--Enables jupyter notebook
+	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
+	'luk400/vim-jukit',
+
 	--Vimtex is a vim version of LaTeX
     'lervag/vimtex',
 
