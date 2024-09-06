@@ -253,6 +253,7 @@ require('lazy').setup {
 
 	--Enables jupyter notebook
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
+	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	'luk400/vim-jukit',
 
 	--Vimtex is a vim version of LaTeX

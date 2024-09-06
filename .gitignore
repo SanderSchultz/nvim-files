@@ -4,6 +4,7 @@ test.sh
 nvim
 .github
 github
+.jukit
 
 spell/
 lazy-lock.json
