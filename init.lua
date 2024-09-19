@@ -5,6 +5,7 @@
 -- FIXME: Fix me --FIXME:
 -- WARNING: Warning -- WARNING:
 
+--For jumping between split-windows do Ctrl+w w, it will jump to next windows or do Ctrl + hjkl to go to specific
 --For checking diagnostics of an error do <leader>d
 --For opening fzf in normal terminal do Alt+c
 --Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
