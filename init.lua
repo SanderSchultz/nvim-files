@@ -322,7 +322,7 @@ require('lazy').setup {
                         },
                     },
 
-					file_ignore_patterns = { "build/.*" },
+					file_ignore_patterns = { "build/.*", "node_modules/.*" },
                 },
             }
 
@@ -427,6 +427,12 @@ require('lazy').setup {
             -- for you, so that they are available from within Neovim.
             require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+			--Sets qss files to be interpreted as css
+			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+				pattern = {"*.qss"},
+				command = "setfiletype css",
+			})
+
 			--Local harpoon variables
             local mark = require("harpoon.mark")
             local ui = require("harpoon.ui")
@@ -521,7 +527,7 @@ require('lazy').setup {
 
 			--Sets specific theme for .c files
             vim.api.nvim_create_autocmd('FileType', {
-                pattern = 'c',
+                pattern = { 'c', 'cpp' },
                 callback = function()
                     vim.schedule(function()
                         vim.cmd('colorscheme github_dark')  -- Change to the desired colorscheme for c
