@@ -140,6 +140,8 @@ vim.keymap.set('n', '<C-q>', ':q!<CR>', { noremap = true })
 vim.keymap.set('i', '(', '()<Left>', {})
 vim.keymap.set('i', '[', '[]<Left>', {})
 vim.keymap.set('i', '{', '{}<Left>', {})
+vim.keymap.set('i', '"', '""<Left>', {})
+vim.keymap.set('i', '\'', '\'\'<Left>', {})
 
 --Opens the Undotree
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
@@ -209,7 +211,7 @@ require('lazy').setup {
 		version = '*',
         config = function()
           require("toggleterm").setup{
-            size = 7,
+            size = 11,
             open_mapping = [[<c-b>]],
             hide_numbers = true,
             shade_filetypes = {},
@@ -255,13 +257,14 @@ require('lazy').setup {
 	--Enables jupyter notebook
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
+	--<leader>do for clearing history
 	{
         'luk400/vim-jukit',
         ft = 'python',  -- Only load for Python files
         config = function()
-            -- You can add any additional configuration for jukit.nvim here
-            -- Example: Set up keymaps, settings, etc.
-            -- For example:
+			-- Resets jukit history and converts to .ipynb file
+vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+			-- Sets default mappings
             vim.g.jukit_mappings_use_default = 0
         end,
     },
