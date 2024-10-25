@@ -80,7 +80,8 @@ vim.opt.updatetime = 50
 vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
 
 --Opens a new terminal in the same dir with Ctrl+t
-vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
+-- vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { noremap = true, silent = true })
 
 --Sets the mapleader key
 vim.g.mapleader = ','
@@ -308,7 +309,8 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
                 local selection = action_state.get_selected_entry()
                 local filepath = selection.path
                 -- Adjust the terminal command according to your setup
-                local cmd = string.format("konsole -e nvim '%s' &", filepath)
+                -- local cmd = string.format("konsole -e nvim '%s' &", filepath)
+                local cmd = string.format("kitty nvim '%s' &", filepath)
                 actions.close(prompt_bufnr)
                 -- vim.cmd(string.format('!%s', cmd))
                 vim.fn.system(cmd)
