@@ -22,6 +22,12 @@ vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
 --Enables line numbers in margin
 vim.opt.nu = true
 
+-- Ignore case in search
+vim.opt.ignorecase = true
+
+-- Override ignorecase if search contains uppercase letters
+vim.opt.smartcase = true
+
 --Enables relativenumber in margin
 vim.opt.relativenumber = true
 
@@ -82,6 +88,9 @@ vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
 --Opens a new terminal in the same dir with Ctrl+t
 -- vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { noremap = true, silent = true })
+
+-- Go to the next tab using Tab
+vim.keymap.set('n', '<Tab>', ':tabnext<CR>', { noremap = true, silent = true })
 
 --Sets the mapleader key
 vim.g.mapleader = ','
@@ -328,7 +337,7 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
                         },
                     },
 
-					file_ignore_patterns = { "build/.*", "node_modules/.*" },
+					file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
                 },
             }
 
