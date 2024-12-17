@@ -389,6 +389,7 @@ require('lazy').setup {
 
 					vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
 					vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = '#484F58', fg = '#ffffff' })
+					vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
 				end,
 			})
 
@@ -408,6 +409,7 @@ require('lazy').setup {
 						vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'none' })
 						vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
 						vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+						vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
 
 						require('lualine').setup {
 							options = {
@@ -547,86 +549,87 @@ require('lazy').setup {
 
 	-- Autocompletion
 	{'hrsh7th/nvim-cmp',
-	event = 'InsertEnter',
-	dependencies = {
-		-- Snippet Engine & its associated nvim-cmp source
-		{
-			'L3MON4D3/LuaSnip',
-			build = (function()
-				-- Build Step is needed for regex support in snippets
-				-- This step is not supported in many windows environments
-				-- Remove the below condition to re-enable on windows
-				if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-					return
-				end
-				return 'make install_jsregexp'
-			end)(),
+		event = 'InsertEnter',
+		dependencies = {
+			-- Snippet Engine & its associated nvim-cmp source
+			{
+				'L3MON4D3/LuaSnip',
+				build = (function()
+					-- Build Step is needed for regex support in snippets
+					-- This step is not supported in many windows environments
+					-- Remove the below condition to re-enable on windows
+					if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+						return
+					end
+					return 'make install_jsregexp'
+				end)(),
+			},
+			'saadparwaiz1/cmp_luasnip',
+
+			'hrsh7th/cmp-nvim-lsp',
+			'hrsh7th/cmp-path',
 		},
-		'saadparwaiz1/cmp_luasnip',
+		config = function()
+			-- See `:help cmp`
+			local cmp = require 'cmp'
+			local luasnip = require 'luasnip'
+			luasnip.config.setup {}
 
-		'hrsh7th/cmp-nvim-lsp',
-		'hrsh7th/cmp-path',
+			cmp.setup {
+				snippet = {
+					expand = function(args)
+						luasnip.lsp_expand(args.body)
+					end,
+				},
+				completion = { completeopt = 'menu,menuone,noinsert' },
+
+				mapping = cmp.mapping.preset.insert {
+
+					['<TAB>'] = cmp.mapping.confirm { select = true },
+				},
+				sources = {
+					{ name = 'nvim_lsp' },
+					{ name = 'luasnip' },
+					{ name = 'path' },
+				},
+			}
+		end,
 	},
-	config = function()
-		-- See `:help cmp`
-		local cmp = require 'cmp'
-		local luasnip = require 'luasnip'
-		luasnip.config.setup {}
 
-		cmp.setup {
-			snippet = {
-				expand = function(args)
-					luasnip.lsp_expand(args.body)
-				end,
-			},
-			completion = { completeopt = 'menu,menuone,noinsert' },
+	{
+		'morhetz/gruvbox',
+		lazy = true,
+	},
+	{
+		'olimorris/onedarkpro.nvim',
+		lazy = true,
+	},
+	{
+		'projekt0n/github-nvim-theme',
+		lazy = true,
+	},
 
-			mapping = cmp.mapping.preset.insert {
+	-- NOTE: Note -- NOTE:
+	-- TODO: Todo -- TODO:
+	-- FIXME: Fix me --FIXME:
+	-- WARNING: Warning -- WARNING:
 
-				['<TAB>'] = cmp.mapping.confirm { select = true },
-			},
-			sources = {
-				{ name = 'nvim_lsp' },
-				{ name = 'luasnip' },
-				{ name = 'path' },
-			},
-		}
-	end,
-},
+	-- Highlight todo, notes, etc in comments
+	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
-{
-	'morhetz/gruvbox',
-	lazy = true,
-},
-{
-	'olimorris/onedarkpro.nvim',
-	lazy = true,
-},
-{
-	'projekt0n/github-nvim-theme',
-	lazy = true,
-},
+	-- Highlight, edit, and navigate code
+	{'nvim-treesitter/nvim-treesitter',
+		build = ':TSUpdate',
+		config = function()
+			---@diagnostic disable-next-line: missing-fields
+			require('nvim-treesitter.configs').setup {
+				ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+				-- Autoinstall languages that are not installed
+				auto_install = true,
+				highlight = { enable = true },
+				-- indent = { enable = true },
+			}
+		end,
+	},
 
--- NOTE: Note -- NOTE:
--- TODO: Todo -- TODO:
--- FIXME: Fix me --FIXME:
--- WARNING: Warning -- WARNING:
-
--- Highlight todo, notes, etc in comments
-{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-{ -- Highlight, edit, and navigate code
-	'nvim-treesitter/nvim-treesitter',
-	build = ':TSUpdate',
-	config = function()
-		---@diagnostic disable-next-line: missing-fields
-		require('nvim-treesitter.configs').setup {
-			ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
-			-- Autoinstall languages that are not installed
-			auto_install = true,
-			highlight = { enable = true },
-			-- indent = { enable = true },
-		}
-	end,
-},
 }
