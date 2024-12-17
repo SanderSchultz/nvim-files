@@ -161,15 +161,15 @@ vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
 --Signs to be used in margin
 local signs = { Error = ' ', Warning = ' ', Hint = ' ', Information = ' ' }
 for type, icon in pairs(signs) do
-    local hl = 'DiagnosticSign' .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
+	local hl = 'DiagnosticSign' .. type
+	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
 end
 
 --Runs update of parsers, lsp and lazy-imports
 local function update_all()
-    vim.cmd 'TSUpdate'
-    vim.cmd 'Mason'
-    vim.cmd 'Lazy'
+	vim.cmd 'TSUpdate'
+	vim.cmd 'Mason'
+	vim.cmd 'Lazy'
 end
 
 --Runs the update_all function
@@ -177,10 +177,10 @@ vim.api.nvim_create_user_command('UpdateAll', update_all, {})
 
 --Highlight for LazyGit
 vim.cmd([[
-  augroup LazyGitColors
-    autocmd!
-    autocmd ColorScheme * highlight LazyGitBorder guifg=#1e222a
-  augroup END
+augroup LazyGitColors
+autocmd!
+autocmd ColorScheme * highlight LazyGitBorder guifg=#1e222a
+augroup END
 ]])
 
 -- Create an autocommand group for LaTeX specific settings
@@ -188,179 +188,236 @@ vim.api.nvim_create_augroup('LaTeX', { clear = true })
 
 -- Autocommands for LaTeX files
 vim.api.nvim_create_autocmd('FileType', {
-    pattern = 'tex',
-    group = 'LaTeX',
-    callback = function()
-        -- Remap when in a .tex file
-        vim.api.nvim_buf_set_keymap(0, 'n', 'j', 'gj', { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, 'n', 'k', 'gk', { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, 'n', '$', 'g<space>', { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, 'n', '0', 'gn', { noremap = true, silent = true })
-    end,
+	pattern = 'tex',
+	group = 'LaTeX',
+	callback = function()
+		-- Remap when in a .tex file
+		vim.api.nvim_buf_set_keymap(0, 'n', 'j', 'gj', { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, 'n', 'k', 'gk', { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, 'n', '$', 'g<space>', { noremap = true, silent = true })
+		vim.api.nvim_buf_set_keymap(0, 'n', '0', 'gn', { noremap = true, silent = true })
+	end,
 })
 
 --Highlights text when yanking/copying
 vim.api.nvim_create_autocmd('TextYankPost', {
-    group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-    callback = function()
-        vim.highlight.on_yank()
-    end,
+	group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+	callback = function()
+		vim.highlight.on_yank()
+	end,
 })
 
 --Install `lazy.nvim` plugin manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
-    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-    vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+	local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+	vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
+
 
 --Initializes lazy
 require('lazy').setup {
 
 	--Toggle terminal with Ctrl+b
-    {'akinsho/toggleterm.nvim',
+	{'akinsho/toggleterm.nvim',
 		version = '*',
-        config = function()
-          require("toggleterm").setup{
-            size = 20,
-            open_mapping = [[<c-b>]],
-            hide_numbers = true,
-            shade_filetypes = {},
-            shade_terminals = true,
-            shading_factor = '1',
-            start_in_insert = true,
-            insert_mappings = true,
-            persist_size = true,
-            direction = 'horizontal',
-            close_on_exit = true,
-            shell = vim.o.shell,
-            float_opts = {
-              border = 'curved',
-              winblend = 0,
-              highlights = {
-                border = "Normal",
-                background = "Normal",
-              }
-            }
-          }
-        end
-      },
+		config = function()
+			require("toggleterm").setup{
+				size = 20,
+				open_mapping = [[<c-b>]],
+				hide_numbers = true,
+				shade_filetypes = {},
+				shade_terminals = true,
+				shading_factor = '1',
+				start_in_insert = true,
+				insert_mappings = true,
+				persist_size = true,
+				direction = 'horizontal',
+				close_on_exit = true,
+				shell = vim.o.shell,
+				float_opts = {
+					border = 'curved',
+					winblend = 0,
+					highlights = {
+						border = "Normal",
+						background = "Normal",
+					}
+				}
+			}
+		end
+	},
 
 	--Configures LazyGit
-    {'kdheepak/lazygit.nvim',
+	{'kdheepak/lazygit.nvim',
 		cmd = {
-            "LazyGit",
-            "LazyGitConfig",
-            "LazyGitCurrentFile",
-            "LazyGitFilter",
-            "LazyGitFilterCurrentFile",
-      },
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-      },
-      -- setting the keybinding for LazyGit with 'keys' is recommended in
-      -- order to load the plugin when the command is run for the first time
-      keys = {
-        { "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
-      }
-    },
+			"LazyGit",
+			"LazyGitConfig",
+			"LazyGitCurrentFile",
+			"LazyGitFilter",
+			"LazyGitFilterCurrentFile",
+		},
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		-- setting the keybinding for LazyGit with 'keys' is recommended in
+		-- order to load the plugin when the command is run for the first time
+		keys = {
+			{ "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+		}
+	},
 
 	--Enables jupyter notebook
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	--<leader>do for clearing history
-	{
-        'luk400/vim-jukit',
-        ft = 'python',  -- Only load for Python files
-        config = function()
+	{'luk400/vim-jukit',
+		ft = 'python',  -- Only load for Python files
+		config = function()
 			-- Resets jukit history and converts to .ipynb file
-vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+			vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
 			-- Sets default mappings
-            vim.g.jukit_mappings_use_default = 0
-        end,
-    },
+			vim.g.jukit_mappings_use_default = 0
+		end,
+	},
 
 	--Vimtex is a vim version of LaTeX
-    'lervag/vimtex',
+	'lervag/vimtex',
 
 	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
-    'psliwka/vim-smoothie',
+	'psliwka/vim-smoothie',
 
 	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-    'ThePrimeagen/harpoon',
+	'ThePrimeagen/harpoon',
 
 	--Enables undotree to get visual of undo files, leader+u
-    'mbbill/undotree',
+	'mbbill/undotree',
 
 	--Integrates Git into the nvim terminal, ':Git pull' example
-    'tpope/vim-fugitive',
+	'tpope/vim-fugitive',
 
 	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
-    { 'nvim-lualine/lualine.nvim', opts = {} },
+	{ 'nvim-lualine/lualine.nvim', opts = {} },
 
-    --Use "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim',     opts = {} },
+	--Use "gc" to comment visual regions/lines
+	{ 'numToStr/Comment.nvim',     opts = {} },
 
 	--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
-    {'nvim-telescope/telescope.nvim',
-        event = 'VimEnter',
-        branch = '0.1.x',
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            { 'nvim-telescope/telescope-ui-select.nvim' },
-            { 'nvim-tree/nvim-web-devicons' },
-        },
-        config = function()
-            local actions = require 'telescope.actions'
-            local action_state = require 'telescope.actions.state'
+	{'nvim-telescope/telescope.nvim',
+		event = 'VimEnter',
+		branch = '0.1.x',
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			{ 'nvim-telescope/telescope-ui-select.nvim' },
+			{ 'nvim-tree/nvim-web-devicons' },
+		},
+		config = function()
 
-            -- Custom action to open files in a new terminal session
-            local open_in_new_terminal = function(prompt_bufnr)
-                local selection = action_state.get_selected_entry()
-                local filepath = selection.path
-                -- Adjust the terminal command according to your setup
-                -- local cmd = string.format("konsole -e nvim '%s' &", filepath)
-                local cmd = string.format("kitty nvim '%s' &", filepath)
-                actions.close(prompt_bufnr)
-                -- vim.cmd(string.format('!%s', cmd))
-                vim.fn.system(cmd)
-            end
+			local actions = require 'telescope.actions'
+			local action_state = require 'telescope.actions.state'
 
-            require('telescope').setup {
-                defaults = {
-                    mappings = {
-                        i = {
-                            ['<C-v>'] = open_in_new_terminal, -- Insert mode
-                        },
-                        n = {
-                            ['<C-v>'] = open_in_new_terminal, -- Normal mode
-                        },
-                    },
+			-- Custom action to open files in a new terminal session
+			local open_in_new_terminal = function(prompt_bufnr)
+				local selection = action_state.get_selected_entry()
+				local filepath = selection.path
+				-- Adjust the terminal command according to your setup
+				-- local cmd = string.format("konsole -e nvim '%s' &", filepath)
+				local cmd = string.format("kitty nvim '%s' &", filepath)
+				actions.close(prompt_bufnr)
+				-- vim.cmd(string.format('!%s', cmd))
+				vim.fn.system(cmd)
+			end
+
+			require('telescope').setup {
+				defaults = {
+					mappings = {
+						i = {
+							['<C-v>'] = open_in_new_terminal, -- Insert mode
+						},
+						n = {
+							['<C-v>'] = open_in_new_terminal, -- Normal mode
+						},
+					},
 
 					file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
-					-- winblend = 20
 				},
 			}
 
-			-- Make the Telescope Normal highlight group transparent
-			vim.api.nvim_set_hl(0, 'TelescopeNormal', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopeBorder', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopePromptNormal', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopePromptBorder', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopeResultsNormal', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopeResultsBorder', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopePreviewNormal', { bg = 'none' })
-			vim.api.nvim_set_hl(0, 'TelescopePreviewBorder', { bg = 'none' })
-
 			-- See `:help telescope.builtin`
 			local builtin = require 'telescope.builtin'
+
 			--Opens fuzzy finder for files in the same folder that was opened
 			vim.keymap.set('n', '<C-x>', builtin.find_files, {})
 
 			--Opens fuzzy finder for files related to Git
 			-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 			-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
+			--
+		end,
+	},
+
+	--Themes in telescope
+	{
+		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
+		'AlexvZyl/nordic.nvim',
+		lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+		priority = 1000, -- make sure to load this before all the other start plugins
+		config = function()
+
+			-- Set highlights AFTER the colorscheme is loaded
+			vim.api.nvim_create_autocmd('ColorScheme', {
+				pattern = '*',
+				callback = function()
+					local hl_groups = {
+						'Normal',
+						'NormalNC',
+						'EndOfBuffer',
+						'SignColumn',
+						'TelescopeNormal',
+						'TelescopeBorder',
+						'TelescopePromptNormal',
+						'TelescopePromptBorder',
+						'TelescopeResultsNormal',
+						'TelescopeResultsBorder',
+						'TelescopePreviewNormal',
+						'TelescopePreviewBorder'
+					}
+
+					for _, group in ipairs(hl_groups) do
+						vim.api.nvim_set_hl(0, group, { bg = 'none' })
+					end
+
+					vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+					vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = '#484F58', fg = '#ffffff' })
+				end,
+			})
+
+			-- Set Nordic theme globally
+			vim.cmd.colorscheme 'nordic'
+
+			--Sets specific theme for .c and .cpp files
+			vim.api.nvim_create_autocmd('FileType', {
+				pattern = { 'c', 'cpp' },
+				callback = function()
+					vim.schedule(function()
+						vim.cmd.colorscheme 'github_dark'
+
+						-- Remove the background (applies globally, but you can limit it to filetype-specific logic)
+						vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+
+						require('lualine').setup {
+							options = {
+								theme = 'nordic'
+							}
+						}
+					end)
+				end,
+			})
+
 		end,
 	},
 
@@ -460,6 +517,12 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
 				command = "setfiletype css",
 			})
 
+			--Sets js files to be interpreted as ts
+			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+				pattern = {"*.js", "*.jsx", "*.tsx"},
+				command = "setfiletype typescript",
+			})
+
 			--Local harpoon variables
 			local mark = require("harpoon.mark")
 			local ui = require("harpoon.ui")
@@ -528,38 +591,6 @@ vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) 
 				{ name = 'path' },
 			},
 		}
-	end,
-},
-
---Themes in telescope
-{
-	-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
-	'AlexvZyl/nordic.nvim',
-	lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-	priority = 1000, -- make sure to load this before all the other start plugins
-	config = function()
-
-		vim.cmd.colorscheme 'nordic'
-		vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58', ctermbg = 'none' }) -- Adjust bg color
-		-- Adjust comment color to darker gray
-		vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true }) -- Replace #B0B0B0 with a light gray
-
-		--Sets specific theme for .c files
-		vim.api.nvim_create_autocmd('FileType', {
-			pattern = { 'c', 'cpp' },
-			callback = function()
-				vim.schedule(function()
-					vim.cmd('colorscheme github_dark')  -- Change to the desired colorscheme for c
-					vim.api.nvim_set_hl(0, 'Normal', {bg = 'none'}); -- Change the background to be transparent (follow terminal)
-					require('lualine').setup {
-						options = {
-							theme = 'nordic'
-						}
-					}
-				end)
-			end,
-		})
-
 	end,
 },
 
