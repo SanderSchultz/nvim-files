@@ -81,7 +81,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.isfname:append '@-@'
 
 --How fast vim triggers the CursorHold event
-vim.opt.updatetime = 50
+vim.opt.updatetime = 10
 
 --Hardsets .h files to be interpreted as .c files
 vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
@@ -165,11 +165,28 @@ for type, icon in pairs(signs) do
 	vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
 end
 
---Runs update of parsers, lsp and lazy-imports
+local function wait_for_window_to_close(bufname, callback)
+  local timer = vim.loop.new_timer()
+  timer:start(100, 100, vim.schedule_wrap(function()
+    local bufnr = vim.fn.bufnr(bufname)
+    if bufnr == -1 or not vim.api.nvim_buf_is_loaded(bufnr) then
+      timer:stop()
+      timer:close()
+      callback()
+    end
+  end))
+end
+
 local function update_all()
-	vim.cmd 'TSUpdate'
-	vim.cmd 'Mason'
-	vim.cmd 'Lazy'
+  vim.cmd 'TSUpdate'
+
+  wait_for_window_to_close('TSUpdate', function()
+    vim.cmd 'Mason'
+
+    wait_for_window_to_close('Mason', function()
+      vim.cmd 'Lazy'
+    end)
+  end)
 end
 
 --Runs the update_all function
@@ -271,18 +288,18 @@ require('lazy').setup {
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	--<leader>do for clearing history
-	{'luk400/vim-jukit',
-		ft = 'python',  -- Only load for Python files
-		config = function()
-			-- Resets jukit history and converts to .ipynb file
-			vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
-			-- Sets default mappings
-			vim.g.jukit_mappings_use_default = 0
-		end,
-	},
+	-- {'luk400/vim-jukit',
+	-- 	ft = 'python',  -- Only load for Python files
+	-- 	config = function()
+	-- 		-- Resets jukit history and converts to .ipynb file
+	-- 		vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+	-- 		-- Sets default mappings
+	-- 		vim.g.jukit_mappings_use_default = 0
+	-- 	end,
+	-- },
 
 	--Vimtex is a vim version of LaTeX
-	'lervag/vimtex',
+	-- 'lervag/vimtex',
 
 	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
 	'psliwka/vim-smoothie',
@@ -294,7 +311,7 @@ require('lazy').setup {
 	'mbbill/undotree',
 
 	--Integrates Git into the nvim terminal, ':Git pull' example
-	'tpope/vim-fugitive',
+	-- 'tpope/vim-fugitive',
 
 	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
 	{ 'nvim-lualine/lualine.nvim', opts = {} },
@@ -310,6 +327,7 @@ require('lazy').setup {
 			'nvim-lua/plenary.nvim',
 			{ 'nvim-telescope/telescope-ui-select.nvim' },
 			{ 'nvim-tree/nvim-web-devicons' },
+			{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 		},
 		config = function()
 
@@ -320,11 +338,9 @@ require('lazy').setup {
 			local open_in_new_terminal = function(prompt_bufnr)
 				local selection = action_state.get_selected_entry()
 				local filepath = selection.path
-				-- Adjust the terminal command according to your setup
-				-- local cmd = string.format("konsole -e nvim '%s' &", filepath)
+
 				local cmd = string.format("kitty nvim '%s' &", filepath)
 				actions.close(prompt_bufnr)
-				-- vim.cmd(string.format('!%s', cmd))
 				vim.fn.system(cmd)
 			end
 
@@ -341,7 +357,14 @@ require('lazy').setup {
 
 					file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
 				},
+				extensions = {
+					fzf = {}
+				},
 			}
+
+			require('telescope').load_extension('fzf')
+
+			require ("multigrep").setup()
 
 			-- See `:help telescope.builtin`
 			local builtin = require 'telescope.builtin'
@@ -352,7 +375,6 @@ require('lazy').setup {
 			--Opens fuzzy finder for files related to Git
 			-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 			-- vim.keymap.set('n', 's', builtin.current_buffer_fuzzy_find, {})
-			--
 		end,
 	},
 
@@ -360,7 +382,7 @@ require('lazy').setup {
 	{
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
 		'AlexvZyl/nordic.nvim',
-		lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+		-- lazy = false,    -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
 		config = function()
 
@@ -380,7 +402,7 @@ require('lazy').setup {
 						'TelescopeResultsNormal',
 						'TelescopeResultsBorder',
 						'TelescopePreviewNormal',
-						'TelescopePreviewBorder'
+						'TelescopePreviewBorder',
 					}
 
 					for _, group in ipairs(hl_groups) do
@@ -388,8 +410,10 @@ require('lazy').setup {
 					end
 
 					vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+					vim.api.nvim_set_hl(0, 'TelescopePreviewLine', { bg = '#484F58' })
 					vim.api.nvim_set_hl(0, 'TelescopeSelection', { bg = '#484F58', fg = '#ffffff' })
 					vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
+
 				end,
 			})
 
@@ -489,28 +513,13 @@ require('lazy').setup {
 				end,
 			})
 
-			-- LSP servers and clients are able to communicate to each other what features they support.
-			--  By default, Neovim doesn't support everything that is in the LSP Specification.
-			--  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
-			--  So, we create new capabilities with nvim cmp, and then broadcast that to the servers.
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-			-- Enable the following language servers
-			--  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-			--
-			--  Add any additional override configuration in the following tables. Available keys are:
-			--  - cmd (table): Override the default command used to start the server
-			--  - filetypes (table): Override the default list of associated filetypes for the server
-			--  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-			--  - settings (table): Override the default settings passed when initializing the server.
-			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {}
 
 			--For lsp management use ':Mason'
 			require('mason').setup()
-			-- You can add other tools here that you want Mason to install
-			-- for you, so that they are available from within Neovim.
 			require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
 			--Sets qss files to be interpreted as css
@@ -549,87 +558,82 @@ require('lazy').setup {
 
 	-- Autocompletion
 	{'hrsh7th/nvim-cmp',
-		event = 'InsertEnter',
-		dependencies = {
-			-- Snippet Engine & its associated nvim-cmp source
-			{
-				'L3MON4D3/LuaSnip',
-				build = (function()
-					-- Build Step is needed for regex support in snippets
-					-- This step is not supported in many windows environments
-					-- Remove the below condition to re-enable on windows
-					if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
-						return
-					end
-					return 'make install_jsregexp'
-				end)(),
-			},
-			'saadparwaiz1/cmp_luasnip',
-
-			'hrsh7th/cmp-nvim-lsp',
-			'hrsh7th/cmp-path',
+	event = 'InsertEnter',
+	dependencies = {
+		-- Snippet Engine & its associated nvim-cmp source
+		{
+			'L3MON4D3/LuaSnip',
+			build = (function()
+				-- Build Step is needed for regex support in snippets
+				-- This step is not supported in many windows environments
+				-- Remove the below condition to re-enable on windows
+				if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+					return
+				end
+				return 'make install_jsregexp'
+			end)(),
 		},
-		config = function()
-			-- See `:help cmp`
-			local cmp = require 'cmp'
-			local luasnip = require 'luasnip'
-			luasnip.config.setup {}
+		'saadparwaiz1/cmp_luasnip',
 
-			cmp.setup {
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
-				completion = { completeopt = 'menu,menuone,noinsert' },
-
-				mapping = cmp.mapping.preset.insert {
-
-					['<TAB>'] = cmp.mapping.confirm { select = true },
-				},
-				sources = {
-					{ name = 'nvim_lsp' },
-					{ name = 'luasnip' },
-					{ name = 'path' },
-				},
-			}
-		end,
+		'hrsh7th/cmp-nvim-lsp',
+		'hrsh7th/cmp-path',
 	},
+	config = function()
+		-- See `:help cmp`
+		local cmp = require 'cmp'
+		local luasnip = require 'luasnip'
+		luasnip.config.setup {}
 
-	{
-		'morhetz/gruvbox',
-		lazy = true,
-	},
-	{
-		'olimorris/onedarkpro.nvim',
-		lazy = true,
-	},
-	{
-		'projekt0n/github-nvim-theme',
-		lazy = true,
-	},
+		cmp.setup {
+			snippet = {
+				expand = function(args)
+					luasnip.lsp_expand(args.body)
+				end,
+			},
+			completion = { completeopt = 'menu,menuone,noinsert' },
 
-	-- NOTE: Note -- NOTE:
-	-- TODO: Todo -- TODO:
-	-- FIXME: Fix me --FIXME:
-	-- WARNING: Warning -- WARNING:
+			mapping = cmp.mapping.preset.insert {
 
-	-- Highlight todo, notes, etc in comments
-	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+				['<TAB>'] = cmp.mapping.confirm { select = true },
+			},
+			sources = {
+				{ name = 'nvim_lsp' },
+				{ name = 'luasnip' },
+				{ name = 'path' },
+			},
+		}
+	end,
+},
 
-	-- Highlight, edit, and navigate code
-	{'nvim-treesitter/nvim-treesitter',
-		build = ':TSUpdate',
-		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require('nvim-treesitter.configs').setup {
-				ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
-				-- Autoinstall languages that are not installed
-				auto_install = true,
-				highlight = { enable = true },
-				-- indent = { enable = true },
-			}
-		end,
+{
+	'morhetz/gruvbox',
+	lazy = true,
+},
+{
+	'olimorris/onedarkpro.nvim',
+	lazy = true,
+},
+{
+	'projekt0n/github-nvim-theme',
+	lazy = true,
+},
+
+-- Highlight  NOTE: etc in comments
+{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+-- Highlight, edit, and navigate code
+{'nvim-treesitter/nvim-treesitter',
+build = ':TSUpdate',
+config = function()
+	---@diagnostic disable-next-line: missing-fields
+	require('nvim-treesitter.configs').setup {
+		ensure_installed = { 'bash', 'c', 'html', 'lua', 'markdown', 'vim', 'vimdoc' },
+		-- Autoinstall languages that are not installed
+		auto_install = true,
+		highlight = { enable = true },
+		-- indent = { enable = true },
+	}
+end,
 	},
 
 }
