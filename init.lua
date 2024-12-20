@@ -11,6 +11,8 @@
 --Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
 --For jumping back do Ctrl+o, for jumping forward do Ctrl+i
 
+--Different commands using i/a (inside and around) and n/l (next, last) = diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets) daa (delet around argument) dana (delete around next argument) dala (delete inside last argument). di? is a custom edge delete
+
 --Disables built in mode-selection (insert, normal) because lualine is used
 vim.opt.showmode = false
 
@@ -119,6 +121,9 @@ vim.keymap.set('n', '<C-n>', 'n', {noremap = true});
 --To unmark what has been marked by search
 vim.keymap.set('n', '<Esc>', ':nohlsearch<CR><Esc>', { noremap = true, silent = true })
 
+-- Opens Oil
+vim.keymap.set('n', '-', '<cmd>Oil<CR>')
+
 --Sets df to delete backwards similar to dt, using dT
 vim.keymap.set('n', 'df', 'dT', {noremap = true});
 
@@ -166,27 +171,27 @@ for type, icon in pairs(signs) do
 end
 
 local function wait_for_window_to_close(bufname, callback)
-  local timer = vim.loop.new_timer()
-  timer:start(100, 100, vim.schedule_wrap(function()
-    local bufnr = vim.fn.bufnr(bufname)
-    if bufnr == -1 or not vim.api.nvim_buf_is_loaded(bufnr) then
-      timer:stop()
-      timer:close()
-      callback()
-    end
-  end))
+	local timer = vim.loop.new_timer()
+	timer:start(100, 100, vim.schedule_wrap(function()
+		local bufnr = vim.fn.bufnr(bufname)
+		if bufnr == -1 or not vim.api.nvim_buf_is_loaded(bufnr) then
+			timer:stop()
+			timer:close()
+			callback()
+		end
+	end))
 end
 
 local function update_all()
-  vim.cmd 'TSUpdate'
+	vim.cmd 'TSUpdate'
 
-  wait_for_window_to_close('TSUpdate', function()
-    vim.cmd 'Mason'
+	wait_for_window_to_close('TSUpdate', function()
+		vim.cmd 'Mason'
 
-    wait_for_window_to_close('Mason', function()
-      vim.cmd 'Lazy'
-    end)
-  end)
+		wait_for_window_to_close('Mason', function()
+			vim.cmd 'Lazy'
+		end)
+	end)
 end
 
 --Runs the update_all function
@@ -238,50 +243,64 @@ require('lazy').setup {
 
 	--Toggle terminal with Ctrl+b
 	{'akinsho/toggleterm.nvim',
-		version = '*',
-		config = function()
-			require("toggleterm").setup{
-				size = 20,
-				open_mapping = [[<c-b>]],
-				hide_numbers = true,
-				shade_filetypes = {},
-				shade_terminals = true,
-				shading_factor = '1',
-				start_in_insert = true,
-				insert_mappings = true,
-				persist_size = true,
-				direction = 'horizontal',
-				close_on_exit = true,
-				shell = vim.o.shell,
-				float_opts = {
-					border = 'curved',
-					winblend = 0,
-					highlights = {
-						border = "Normal",
-						background = "Normal",
-					}
+	version = '*',
+	config = function()
+		require("toggleterm").setup{
+			size = 20,
+			open_mapping = [[<c-b>]],
+			hide_numbers = true,
+			shade_filetypes = {},
+			shade_terminals = true,
+			shading_factor = '1',
+			start_in_insert = true,
+			insert_mappings = true,
+			persist_size = true,
+			direction = 'horizontal',
+			close_on_exit = true,
+			shell = vim.o.shell,
+			float_opts = {
+				border = 'curved',
+				winblend = 0,
+				highlights = {
+					border = "Normal",
+					background = "Normal",
 				}
 			}
-		end
+		}
+	end
+},
+
+--Configures LazyGit
+{'kdheepak/lazygit.nvim',
+cmd = {
+	"LazyGit",
+	"LazyGitConfig",
+	"LazyGitCurrentFile",
+	"LazyGitFilter",
+	"LazyGitFilterCurrentFile",
+},
+dependencies = {
+	"nvim-lua/plenary.nvim",
+},
+-- setting the keybinding for LazyGit with 'keys' is recommended in
+-- order to load the plugin when the command is run for the first time
+keys = {
+	{ "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+}
 	},
 
-	--Configures LazyGit
-	{'kdheepak/lazygit.nvim',
-		cmd = {
-			"LazyGit",
-			"LazyGitConfig",
-			"LazyGitCurrentFile",
-			"LazyGitFilter",
-			"LazyGitFilterCurrentFile",
+	{
+		'stevearc/oil.nvim',
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {
+			keymaps = {
+				['<C-s>'] = false -- Disable Oil's Ctrl+S keybinding
+			}
 		},
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		-- setting the keybinding for LazyGit with 'keys' is recommended in
-		-- order to load the plugin when the command is run for the first time
-		keys = {
-			{ "<A-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" }
-		}
+		-- Optional dependencies
+		dependencies = { { "echasnovski/mini.icons", opts = {} } },
+		-- dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
 	},
 
 	--Enables jupyter notebook
@@ -291,36 +310,45 @@ require('lazy').setup {
 	-- {'luk400/vim-jukit',
 	-- 	ft = 'python',  -- Only load for Python files
 	-- 	config = function()
-	-- 		-- Resets jukit history and converts to .ipynb file
-	-- 		vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
-	-- 		-- Sets default mappings
-	-- 		vim.g.jukit_mappings_use_default = 0
-	-- 	end,
-	-- },
+		-- 		-- Resets jukit history and converts to .ipynb file
+		-- 		vim.api.nvim_set_keymap('n', '<leader>np', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+		-- 		-- Sets default mappings
+		-- 		vim.g.jukit_mappings_use_default = 0
+		-- 	end,
+		-- },
 
-	--Vimtex is a vim version of LaTeX
-	-- 'lervag/vimtex',
+		--Vimtex is a vim version of LaTeX
+		-- 'lervag/vimtex',
 
-	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
-	'psliwka/vim-smoothie',
+		--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
+		'psliwka/vim-smoothie',
 
-	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-	'ThePrimeagen/harpoon',
+		--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
+		'ThePrimeagen/harpoon',
 
-	--Enables undotree to get visual of undo files, leader+u
-	'mbbill/undotree',
+		--Enables undotree to get visual of undo files, leader+u
+		'mbbill/undotree',
 
-	--Integrates Git into the nvim terminal, ':Git pull' example
-	-- 'tpope/vim-fugitive',
+		--Lets you do diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets)
+		{
+			'echasnovski/mini.ai',
+			version = '*',
+			config = function()
+				require('mini.ai').setup()
+			end
+		},
 
-	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
-	{ 'nvim-lualine/lualine.nvim', opts = {} },
+		--Integrates Git into the nvim terminal, ':Git pull' example
+		-- 'tpope/vim-fugitive',
 
-	--Use "gc" to comment visual regions/lines
-	{ 'numToStr/Comment.nvim',     opts = {} },
+		--Enables lualine, the line at the bottom, this has to be included this way with brackets!
+		{ 'nvim-lualine/lualine.nvim', opts = {} },
 
-	--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
-	{'nvim-telescope/telescope.nvim',
+		--Use "gc" to comment visual regions/lines
+		{ 'numToStr/Comment.nvim',     opts = {} },
+
+		--Fuzzy finder in buffer, can use Ctrl+x to open buffer, Ctrl+v to open in new pane
+		{'nvim-telescope/telescope.nvim',
 		event = 'VimEnter',
 		branch = '0.1.x',
 		dependencies = {
@@ -620,6 +648,8 @@ require('lazy').setup {
 
 -- Highlight  NOTE: etc in comments
 { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+
 
 -- Highlight, edit, and navigate code
 {'nvim-treesitter/nvim-treesitter',
