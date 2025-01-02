@@ -692,46 +692,8 @@ keys = {
 			-- indent = { enable = true },
 		}
 
-		local ts_utils = require('nvim-treesitter.ts_utils')
+		require ("treesitter_utils").setup()
 
-		local function delete_argument(args, cursor_row, cursor_col)
-			for i, arg in ipairs(args) do
-				local s_row, s_col, e_row, e_col = arg:range()
-				if cursor_row >= s_row and cursor_row <= e_row and cursor_col >= s_col and cursor_col <= e_col then
-					local next_arg = args[i + 1] or args[1]
-					local ns_row, ns_col, ne_row, ne_col = next_arg:range()
-					vim.api.nvim_buf_set_text(0, ns_row, ns_col, ne_row, ne_col, {})
-					vim.api.nvim_win_set_cursor(0, {ns_row + 1, ns_col})
-					vim.cmd('startinsert')
-					return
-				end
-			end
-			local fs_row, fs_col, fe_row, fe_col = args[1]:range()
-			vim.api.nvim_buf_set_text(0, fs_row, fs_col, fe_row, fe_col, {})
-			vim.api.nvim_win_set_cursor(0, {fs_row + 1, fs_col})
-			vim.cmd('startinsert')
-		end
-
-		local function handle_delete_arg()
-			local node = ts_utils.get_node_at_cursor()
-			while node and node:type() ~= 'call_expression' do node = node:parent() end
-			if not node then return print("No call_expression found.") end
-
-			local args, cursor = {}, vim.api.nvim_win_get_cursor(0)
-			for child in node:iter_children() do
-				if child:type() == 'argument_list' then
-					for arg in child:iter_children() do
-						if not ({['('] = true, [')'] = true, [','] = true})[arg:type()] then
-							table.insert(args, arg)
-						end
-					end
-					break
-				end
-			end
-			if #args > 0 then delete_argument(args, cursor[1] - 1, cursor[2]) else print("No arguments found.") end
-		end
-
-		vim.keymap.set('n', 'dn', handle_delete_arg, { noremap = true, silent = true })
 
 	end,
 },
