@@ -332,24 +332,24 @@ keys = {
 	--<leader>os for opening split view with jupyter notebook, then press <Enter> on line to run
 	--<leader>co or <leader>cO to create new cells, then press <leader><Space> to run cell
 	--<leader>do for clearing history
-	{'luk400/vim-jukit',
-	ft = { 'python', 'json' },
-	config = function()
-
-		vim.g.jukit_show_execution_signs = 1
-
-		vim.g.jukit_shell_cmd = '/workspace/.venv/bin/python -m IPython --no-autoindent'
-		-- Resets jukit history and converts to .ipynb file
-		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
-		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
-
-		-- Map <leader>all to execute all cells in vim-jukit
-		vim.api.nvim_set_keymap('n', '<leader>all', ':call jukit#send#all()<CR>', { noremap = true, silent = true })
-
-		-- Sets default mappings
-		vim.g.jukit_mappings_use_default = 0
-	end,
-},
+-- 	{'luk400/vim-jukit',
+-- 	ft = { 'python', 'json' },
+-- 	config = function()
+--
+-- 		vim.g.jukit_show_execution_signs = 1
+--
+-- 		vim.g.jukit_shell_cmd = '/workspace/.venv/bin/python -m IPython --no-autoindent'
+-- 		-- Resets jukit history and converts to .ipynb file
+-- 		vim.api.nvim_set_keymap('n', '<leader>nno', ":call jukit#cells#delete_outputs(1) | call jukit#convert#notebook_convert('jupyter-notebook')<CR>", { noremap = true, silent = true })
+-- 		vim.api.nvim_set_keymap('n', '<leader>a', ":call jukit#convert#notebook_convert('script')", { noremap = true, silent = true })
+--
+-- 		-- Map <leader>all to execute all cells in vim-jukit
+-- 		vim.api.nvim_set_keymap('n', '<leader>all', ':call jukit#send#all()<CR>', { noremap = true, silent = true })
+--
+-- 		-- Sets default mappings
+-- 		vim.g.jukit_mappings_use_default = 0
+-- 	end,
+-- },
 
 --Vimtex is a vim version of LaTeX
 -- 'lervag/vimtex',
@@ -578,7 +578,36 @@ end,
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-			local servers = {}
+			local servers = {
+				pylsp = {
+					settings = {
+						pylsp = {
+							-- Specify the Python path for Poetry's virtual environment
+							configurationSources = { "pycodestyle" },
+							plugins = {
+								jedi = {
+									-- This is specifically for pylsp to work in poetry container!
+									environment = "/workspace/.venv",
+									auto_import = true,
+								},
+								pycodestyle = {
+									enabled = true,
+									ignore = { "E501", "E262", "W503", "E266", "E402" },
+									maxLineLength = 999,
+								},
+								flake8 = {
+									enabled = true,
+									ignore = { "E501", "E262", "W503", "E266", "N8", "E402"},
+								},
+								pylint = {
+									enabled = false,
+									args = { "--disable=C0301, C0103, C0411" },
+								},
+							},
+						},
+					},
+				},
+			}
 
 			--For lsp management use ':Mason'
 			require('mason').setup()
@@ -597,10 +626,10 @@ end,
 			})
 
 			--Sets ibpn files to be interpreted as python
-			vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-				pattern = {"*.ipynb"},
-				command = "setfiletype python",
-			})
+			-- vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+			-- 	pattern = {"*.ipynb"},
+			-- 	command = "setfiletype python",
+			-- })
 
 			--Local harpoon variables
 			local mark = require("harpoon.mark")
