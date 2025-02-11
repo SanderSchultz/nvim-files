@@ -99,8 +99,8 @@ vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { nor
 --Sets the mapleader key
 vim.g.mapleader = ','
 
---See diagnostic of error, leader d
-vim.keymap.set('n', '<C-i>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
+--See diagnostic of error, Ctrl + i 
+vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>', { noremap = true, silent = true })
 
 --Rename all variables, Ctrl + r
 vim.keymap.set('n', '<C-r>', ':%s/')
@@ -506,6 +506,31 @@ end,
 				end,
 			})
 
+			vim.api.nvim_create_autocmd('FileType', {
+				pattern = { 'rust' },
+				callback = function()
+					vim.schedule(function()
+						vim.cmd.colorscheme 'github_dark'
+						-- vim.cmd.colorscheme 'gruvbox'
+
+						-- Remove the background (applies globally, but you can limit it to filetype-specific logic)
+						vim.api.nvim_set_hl(0, 'Normal', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'none' })
+						vim.api.nvim_set_hl(0, 'CursorLine', { bg = '#484F58' })
+						vim.api.nvim_set_hl(0, 'Comment', { fg = '#B0B0B0', italic = true })
+
+						require('lualine').setup {
+							options = {
+								-- theme = 'nordic'
+								theme = 'gruvbox_dark'
+							}
+						}
+					end)
+				end,
+			})
+
 		end,
 	},
 
@@ -561,6 +586,7 @@ end,
 					--  Most Language Servers support renaming across files, etc.
 					map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
 
+					map('gC', vim.lsp.buf.incoming_calls, 'Incoming Calls')
 					-- Execute a code action, usually your cursor needs to be on top of an error
 					-- or a suggestion from your LSP for this to activate.
 					map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
@@ -588,6 +614,7 @@ end,
 								jedi = {
 									-- This is specifically for pylsp to work in poetry container!
 									environment = "/workspace/.venv",
+									environment = "/workspaces/web_synpop/.venv",
 									auto_import = true,
 								},
 								pycodestyle = {
@@ -635,7 +662,7 @@ end,
 			local mark = require("harpoon.mark")
 			local ui = require("harpoon.ui")
 			vim.keymap.set("n", "<leader>a", mark.add_file)
-			vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
+			vim.keymap.set("n", "<C-p>", ui.toggle_quick_menu)
 			vim.keymap.set("n", "<C-f>", function() ui.nav_next() end)
 
 			require('mason-lspconfig').setup {
