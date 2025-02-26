@@ -116,6 +116,9 @@ vim.keymap.set('i', '<A-Space>', '<Esc>', { noremap = true })
 --Changes / search to 's'
 vim.keymap.set('n', 's', '/', { noremap = true })
 
+--Formats file by LSP standard
+vim.keymap.set('n', '=G', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
+
 --Changes Ctrl+n to move to next instance in search, SHIFT+n to go backwards
 vim.keymap.set('n', '<C-n>', 'n', {noremap = true});
 
@@ -651,6 +654,9 @@ end,
 				pattern = {"*.js", "*.jsx", "*.tsx"},
 				command = "setfiletype typescript",
 			})
+
+			--Formats file by LSP standard
+			vim.keymap.set('n', '=G', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
 
 			--Sets ibpn files to be interpreted as python
 			-- vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
