@@ -111,7 +111,9 @@ vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 --Changes keymapping for end of line and beginning of line
 vim.keymap.set('n', '<Space>', '$', { noremap = true })
 vim.keymap.set('n', 'n', '^', { noremap = true })
-vim.keymap.set('i', '<A-Space>', '<Esc>', { noremap = true })
+
+--Toggles between last 2 files in buffer
+vim.keymap.set('n', '<C-f>', '<C-^>')
 
 --Changes / search to 's'
 vim.keymap.set('n', 's', '/', { noremap = true })
@@ -587,7 +589,7 @@ end,
 
 					-- Rename the variable under your cursor
 					--  Most Language Servers support renaming across files, etc.
-					map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+					map('gR', vim.lsp.buf.rename, '[R]e[n]ame')
 
 					map('gC', vim.lsp.buf.incoming_calls, 'Incoming Calls')
 					-- Execute a code action, usually your cursor needs to be on top of an error
@@ -616,7 +618,6 @@ end,
 							plugins = {
 								jedi = {
 									-- This is specifically for pylsp to work in poetry container!
-									environment = "/workspace/.venv",
 									environment = "/workspaces/web_synpop/.venv",
 									auto_import = true,
 								},
@@ -665,11 +666,11 @@ end,
 			-- })
 
 			--Local harpoon variables
-			local mark = require("harpoon.mark")
-			local ui = require("harpoon.ui")
-			vim.keymap.set("n", "<leader>a", mark.add_file)
-			vim.keymap.set("n", "<C-p>", ui.toggle_quick_menu)
-			vim.keymap.set("n", "<C-f>", function() ui.nav_next() end)
+			-- local mark = require("harpoon.mark")
+			-- local ui = require("harpoon.ui")
+			-- vim.keymap.set("n", "<leader>a", mark.add_file)
+			-- vim.keymap.set("n", "<C-p>", ui.toggle_quick_menu)
+			-- vim.keymap.set("n", "<C-f>", function() ui.nav_next() end)
 
 			require('mason-lspconfig').setup {
 				handlers = {
