@@ -177,7 +177,8 @@ vim.keymap.set('v', 'd', '"+d', {noremap = true})
 vim.keymap.set('n', '<C-z>', ':undo<CR>', { noremap = true })
 
 --Sets Ctrl + s to save file like :w
-vim.keymap.set('n', '<C-s>', ':w<CR>', { noremap = true })
+vim.keymap.set('n', '<C-s>', '<Cmd>update<CR>', { silent = true })
+vim.keymap.set('i', '<C-s>', '<Esc><Cmd>update<CR>a', { silent = true })
 
 --Sets Ctrl + q to quit like :q!
 vim.keymap.set('n', '<C-q>', ':q!<CR>', { noremap = true })
@@ -450,7 +451,7 @@ end,
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
 		'AlexvZyl/nordic.nvim',
 		-- lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-		priority = 1000, -- make sure to load this before all the other start plugins
+		-- priority = 1000, -- make sure to load this before all the other start plugins
 		config = function()
 
 			-- Set highlights AFTER the colorscheme is loaded
@@ -747,6 +748,49 @@ end,
 {
 	'projekt0n/github-nvim-theme',
 	lazy = true,
+},
+
+-- Better cmd visuals
+{
+  "folke/noice.nvim",
+  event = "VeryLazy",
+  opts = {
+	  messages = {
+      enabled = false,
+    },
+	views = {
+		cmdline_popup = {
+			border = {
+				style = "rounded"
+			}
+		}
+	},
+    lsp = {
+      progress = {
+        enabled = false, -- Disables LSP progress messages
+      },
+      hover = {
+        enabled = false, -- Disables LSP hover messages
+      },
+      signature = {
+        enabled = false, -- Disables signature help messages
+      },
+    },
+    popupmenu = {
+      enabled = false, -- Disables Noice popup menu
+    },
+    notify = {
+      enabled = false, -- Disables Noice notifications
+    },
+  },
+  dependencies = {
+    -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+    "MunifTanjim/nui.nvim",
+    -- OPTIONAL:
+    --   `nvim-notify` is only needed, if you want to use the notification view.
+    --   If not available, we use `mini` as the fallback
+    "rcarriga/nvim-notify",
+    }
 },
 
 -- Highlight  NOTE: etc in comments
