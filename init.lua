@@ -135,7 +135,7 @@ vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 -- vim.keymap.set('n', 'dn', cycle_arguments, { noremap = true, silent = true })
 
 --Sets df to delete backwards similar to dt, using dT
-vim.keymap.set('n', 'df', 'dT', { noremap = true });
+-- vim.keymap.set('n', 'df', 'dT', { noremap = true });
 
 --Moves highlighted lines up and down inside the file
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
