@@ -1,5 +1,13 @@
 ---@diagnostic disable: undefined-global
 
+local original_notify = vim.notify
+vim.notify = function(msg, ...)
+  if type(msg) == "string" and msg:find("deprecated") then
+    return
+  end
+  original_notify(msg, ...)
+end
+
 -- NOTE: Note -- NOTE:
 -- TODO: Todo -- TODO:
 -- FIXME: Fix me --FIXME:
@@ -460,7 +468,13 @@ require('lazy').setup {
 			local builtin = require 'telescope.builtin'
 
 			--Opens fuzzy finder for files in the same folder that was opened
-			vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+			-- vim.keymap.set('n', '<C-x>', builtin.find_files, {})
+
+			vim.keymap.set('n', '<C-x>', function()
+			  require('telescope.builtin').find_files({
+				file_ignore_patterns = {"node_modules", "target", "build"}
+			  })
+			end)
 
 			--Opens fuzzy finder for files related to Git
 			-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})
