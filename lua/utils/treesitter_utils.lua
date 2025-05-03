@@ -2,7 +2,9 @@
 
 local M = {}
 
-local ts_utils = require('nvim-treesitter.ts_utils')
+local function get_ts_utils()
+	return require('nvim-treesitter.ts_utils')
+end
 
 -- Function to process call_expression node
 local function process_call_expression(node)
@@ -38,7 +40,7 @@ local function analyze_node()
     local root = tree:root()
 
     -- Get the current node under the cursor
-    local node = ts_utils.get_node_at_cursor()
+    local node = ts_utils.get_ts_utils.get_node_at_cursor()
     if not node then
         print("No node under cursor.")
         return

@@ -5,6 +5,7 @@ nvim
 .github
 github
 .jukit
+.env
 
 spell/
 lazy-lock.json
