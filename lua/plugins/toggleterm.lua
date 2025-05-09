@@ -1,4 +1,4 @@
---Toggle terminal with Ctrl+b
+-- Toggles a terminal with Ctrl+b
 return {
 	'akinsho/toggleterm.nvim',
 	version = '*',

@@ -11,17 +11,10 @@
 --Telescope file finder Ctrl+X, press C-v for vsplit, C-x for split, C-t for new tab
 --For jumping back do Ctrl+o, for jumping forward do Ctrl+i
 --For deleting next argument in functions() do 'dn'
-
 --Different commands using i/a (inside and around) and n/l (next, last) = diq (delete inside quotes) dif (delete inside function) dib (delete inside brackets) daa (delet around argument) dana (delete around next argument) dala (delete inside last argument). di? is a custom edge delete
 
 --Disables built in mode-selection (insert, normal) because lualine is used
 vim.opt.showmode = false
-
---Sets netrw to display tree
-vim.g.netrw_liststyle = 3
-
---Disables showing dotfiles on launch in netrw, use 'gh' to toggle
--- vim.g.netrw_list_hide = '\\(^\\|\\s\\s\\)\\zs\\.\\S\\+'
 
 --Enables line numbers in margin
 vim.opt.nu = true
@@ -87,27 +80,21 @@ vim.opt.isfname:append '@-@'
 vim.opt.updatetime = 10
 
 --Hardsets .h files to be interpreted as .c files
-vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
+-- vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
 
 --Opens a new terminal in the same dir with Ctrl+t
--- vim.keymap.set('n', '<C-t>', ':!konsole --workdir %:p:h & disown<CR><CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { noremap = true, silent = true })
-
--- Go to the next tab using Tab
--- vim.keymap.set('n', '<C-i>', '<C-i>', { noremap = true, silent = true })
 
 --Sets the mapleader key
 vim.g.mapleader = ','
 
-
---Install `lazy.nvim` plugin manager
+--Install `lazy.nvim` plugin manager if not present
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
 	local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
 	vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
-
 
 --Initializes lazy
 require('lazy').setup {

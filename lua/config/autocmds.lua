@@ -1,4 +1,5 @@
 --Highlights text when yanking/copying
+---@diagnostic disable: undefined-global
 vim.api.nvim_create_autocmd('TextYankPost', {
 	group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
 	callback = function()
@@ -14,7 +15,7 @@ vim.notify = function(msg, ...)
 	original_notify(msg, ...)
 end
 
-function print_treesitter_node_info()
+function Print_treesitter_node_info()
 	local ts_utils = require('nvim-treesitter.ts_utils')
 	local node = ts_utils.get_node_at_cursor()
 	if node then
@@ -32,7 +33,7 @@ function print_treesitter_node_info()
 	end
 end
 
-vim.api.nvim_create_user_command('TSNodeInfo', print_treesitter_node_info, {})
+vim.api.nvim_create_user_command('TSNodeInfo', Print_treesitter_node_info, {})
 
 local function wait_for_window_to_close(bufname, callback)
 	local timer = vim.loop.new_timer()

@@ -1,6 +1,6 @@
 ---@diagnostic disable: undefined-global
 
---See diagnostic of error, Ctrl + i
+-- See diagnostics of error, Ctrl + e
 vim.keymap.set('n', '<C-e>', ':lua vim.diagnostic.open_float(nil, {focus = false})<CR>',
 	{ noremap = true, silent = true })
 

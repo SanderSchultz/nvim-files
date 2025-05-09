@@ -1,4 +1,4 @@
--- Better cmd visuals
+-- Better cmd visuals when doing :
 return {
 	"folke/noice.nvim",
 	event = "VeryLazy",
