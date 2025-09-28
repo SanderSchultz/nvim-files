@@ -79,9 +79,6 @@ vim.opt.isfname:append '@-@'
 --How fast vim triggers the CursorHold event
 vim.opt.updatetime = 10
 
---Hardsets .h files to be interpreted as .c files
--- vim.cmd("autocmd BufRead,BufNewFile *.h set filetype=c")
-
 --Opens a new terminal in the same dir with Ctrl+t
 vim.keymap.set('n', '<C-t>', ':!kitty --directory %:p:h & disown<CR><CR>', { noremap = true, silent = true })
 
@@ -98,52 +95,11 @@ vim.opt.rtp:prepend(lazypath)
 
 --Initializes lazy
 require('lazy').setup {
-
 	{ import = "plugins" },
-
-	--Vimtex is a vim version of LaTeX
-	-- 'lervag/vimtex',
-
-	--Vimsmoothie makes the vim Ctrl+U/D scrolling smooth
-	'psliwka/vim-smoothie',
-
-	--Harpoon, saving files in buffer, Ctrl+e for list, leader+a to add to list
-	-- 'ThePrimeagen/harpoon',
-
-	--Enables undotree to get visual of undo files, leader+u
-	'mbbill/undotree',
-
-	--Lets you do ciq (change inside quotes) cif (change inside function) cib (change inside brackets)
-	{
-		'echasnovski/mini.ai',
-		version = '*',
-		config = function()
-			require('mini.ai').setup()
-		end
-	},
-
-	--Enables lualine, the line at the bottom, this has to be included this way with brackets!
-	{ 'nvim-lualine/lualine.nvim', opts = {} },
-
-	--Use "gc" to comment visual regions/lines
-	{ 'numToStr/Comment.nvim',     opts = {} },
-
-	{ 'morhetz/gruvbox', lazy = true },
-
-	{ 'olimorris/onedarkpro.nvim', lazy = true },
-	{ 'projekt0n/github-nvim-theme', lazy = true },
-
-	-- Highlight  TODO: etc in comments
-	{ 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
-	{
-		'nvim-treesitter/playground',
-		cmd = { 'TSPlaygroundToggle', 'TSHighlightCapturesUnderCursor' }, -- Load only when needed
-	},
-
 }
 
 require("utils.treesitter_utils")
 require("config.highlights")
 require("config.autocmds")
 require("config.keymaps")
+require("config.themes")

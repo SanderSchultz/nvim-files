@@ -10,18 +10,18 @@ map('n', '<M-l>', '<Cmd>BufferNext<CR>', opts)
 map('n', '<M-w>', '<Cmd>BufferClose<CR>', opts)
 
 map("c", "?", function()
-  if vim.fn.getcmdpos() == 1 then
-    return vim.api.nvim_replace_termcodes("Oil oil-ssh://", true, false, true)
-  end
-  return "?"
+	if vim.fn.getcmdpos() == 1 then
+		return vim.api.nvim_replace_termcodes("Oil oil-ssh://", true, false, true)
+	end
+	return "?"
 end, { expr = true, noremap = true, desc = "Oil-SSH prefix when cmdline is empty" })
 
 -- In command‐line mode, make <CR> “smart” for Oil-SSH URIs
 map("c", "<CR>", function()
-  if vim.fn.getcmdline():match("^Oil%s+oil%-ssh://[^/]+$") then
-    return vim.api.nvim_replace_termcodes("/\r", true, false, true)
-  end
-  return vim.api.nvim_replace_termcodes("\r", true, false, true)
+	if vim.fn.getcmdline():match("^Oil%s+oil%-ssh://[^/]+$") then
+		return vim.api.nvim_replace_termcodes("/\r", true, false, true)
+	end
+	return vim.api.nvim_replace_termcodes("\r", true, false, true)
 end, { expr = true, noremap = true, desc = "Oil-SSH: append slash before Enter" })
 
 -- See diagnostics of error, Ctrl + e
@@ -88,12 +88,19 @@ map('v', 'd', '"+d', no_remap)
 map('n', '<C-z>', ':undo<CR>', no_remap)
 
 --Sets Ctrl + s to save file like :w
-map('n', '<C-s>', '<Cmd>update<CR>', silent)
-map('i', '<C-s>', '<Esc><Cmd>update<CR>a', silent)
+map('n', '<C-s>', ':lua vim.lsp.buf.format()<CR><Cmd>update<CR>', opts)
 
---Sets Ctrl + s to save file like :w
-map('n', '<C-q>', '<Cmd>quit<CR>', silent)
-map('i', '<C-q>', '<Esc><Cmd>quit<CR>a', silent)
+map('i', '<C-s>', '<Esc>:lua vim.lsp.buf.format()<CR><Cmd>update<CR>', opts)
+
+--Sets Ctrl + q to close tab, quit if last tab
+map('n', '<C-q>', function()
+	if #vim.fn.getbufinfo({ buflisted = 1 }) <= 1 then
+		vim.cmd('quit')
+	else
+		vim.cmd('BufferClose')
+	end
+end, silent)
+map('i', '<C-q>', '<Esc><C-q>', silent)
 
 --Sets mappings to complete parentheses and quotes
 map('i', '(', '()<Left>', {})

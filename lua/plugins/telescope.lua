@@ -32,6 +32,7 @@ return {
 					n = {
 						['<C-v>'] = open_in_new_terminal, -- Normal mode
 					},
+
 				},
 
 				file_ignore_patterns = { "build/.*", "node_modules/.*", "obj/.*", "lib/.*", "bin/.*" },
