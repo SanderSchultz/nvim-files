@@ -32,7 +32,7 @@ return {
 				-- Jump to the definition of the word under your cursor.
 				--  This is where a variable was first declared, or where a function is defined, etc.
 				--  To jump back, press <C-T> or <C-o>.
-				map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+				map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
 
 				-- Find references for the word under your cursor.
 				-- map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
@@ -76,7 +76,18 @@ return {
 		local capabilities = vim.lsp.protocol.make_client_capabilities()
 		capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
+		local ensure_installed = {
+			'clangd',
+			'pylsp',
+		}
+
 		local servers = {
+			clangd = {
+				cmd = {
+					'clangd',
+					'--offset-encoding=utf-16',
+				},
+			},
 			pylsp = {
 				settings = {
 					pylsp = {
@@ -127,6 +138,8 @@ return {
 		vim.keymap.set('n', '=G', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
 
 		require('mason-lspconfig').setup {
+			ensure_installed = ensure_installed,
+			automatic_installation = true,
 			handlers = {
 				function(server_name)
 					local server = servers[server_name] or {}

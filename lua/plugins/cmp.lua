@@ -1,7 +1,7 @@
 --Adds Autocompletion
 return {
 	'hrsh7th/nvim-cmp',
-	event = 'InsertEnter',
+	event = { 'InsertEnter', 'CmdlineEnter' },
 	dependencies = {
 		-- Snippet Engine & its associated nvim-cmp source
 		{
@@ -20,6 +20,8 @@ return {
 
 		'hrsh7th/cmp-nvim-lsp',
 		'hrsh7th/cmp-path',
+		'hrsh7th/cmp-cmdline',
+		'hrsh7th/cmp-buffer',
 	},
 	config = function()
 		-- See `:help cmp`
@@ -45,5 +47,24 @@ return {
 				{ name = 'path' },
 			},
 		}
+
+		-- Command-line completion for : commands
+		cmp.setup.cmdline(':', {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = cmp.config.sources({
+				{ name = 'path' }
+			}, {
+				{ name = 'cmdline' }
+			}),
+			matching = { disallow_symbol_nonprefix_matching = false }
+		})
+
+		-- Command-line completion for / and ? (search)
+		cmp.setup.cmdline({ '/', '?' }, {
+			mapping = cmp.mapping.preset.cmdline(),
+			sources = {
+				{ name = 'buffer' }
+			}
+		})
 	end,
 }

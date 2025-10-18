@@ -2,7 +2,7 @@
 return {
 	'nvim-telescope/telescope.nvim',
 	event = 'VimEnter',
-	branch = '0.1.x',
+	branch = 'master',
 	dependencies = {
 		'nvim-lua/plenary.nvim',
 		{ 'nvim-telescope/telescope-ui-select.nvim' },
@@ -44,16 +44,17 @@ return {
 
 		require('telescope').load_extension('fzf')
 		require("utils.combined_grep").setup()
+		require("utils.combined_find_files").setup()
 
 		-- See `:help telescope.builtin`
 		local builtin = require 'telescope.builtin'
 
 		--Opens fuzzy finder for files in the same folder that was opened
-		vim.keymap.set('n', '<C-x>', function()
-			require('telescope.builtin').find_files({
-				file_ignore_patterns = { "node_modules", "target", "build" }
-			})
-		end)
+		-- vim.keymap.set('n', '<C-x>', function()
+		-- 	require('telescope.builtin').find_files({
+		-- 		file_ignore_patterns = { "node_modules", "target", "build" }
+		-- 	})
+		-- end)
 
 		--Opens fuzzy finder for files related to Git
 		-- vim.keymap.set('n', '<C-p>', builtin.git_files, {})

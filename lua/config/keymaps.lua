@@ -46,8 +46,8 @@ end, opts)
 map('n', '<Space>', '$', no_remap)
 map('n', 'n', '^', no_remap)
 
---Toggles between last 2 files in buffer
-map('n', '<C-f>', '<C-^>')
+--Swaps between header and source file (Neovim 0.11+ uses Lsp prefix)
+map('n', '<C-f>', ':LspClangdSwitchSourceHeader<CR>', opts)
 
 --Replaces C-w to ALT + these keys, for windows movement and splitting
 --THESE CONFLICT WITH BARBAR SHORTCUTS
