@@ -96,13 +96,6 @@ vim.opt.rtp:prepend(lazypath)
 --Initializes lazy
 require('lazy').setup {
 	{ import = "plugins" },
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
-		opts = {
-			scope = { enabled = false }
-		}
-	}
 }
 
 require("utils.treesitter_utils")

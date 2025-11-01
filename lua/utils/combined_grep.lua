@@ -62,8 +62,18 @@ local live_combined_grep = function(opts)
 
 			-- Add search term
 			if #search_parts > 0 then
+				local search_term = table.concat(search_parts, " ")
+
+				-- Check if starts with ! for exact/word-boundary search
+				if search_term:match("^!") then
+					-- Remove the ! and add word boundary for exact match
+					search_term = search_term:sub(2)
+					search_term = "\\b" .. search_term
+				end
+				-- Otherwise fuzzy search (default - no word boundary)
+
 				table.insert(args, "-e")
-				table.insert(args, table.concat(search_parts, " "))
+				table.insert(args, search_term)
 			end
 
 			-- Add file pattern

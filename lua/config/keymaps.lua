@@ -99,9 +99,9 @@ map('n', '<C-s>', ':lua vim.lsp.buf.format()<CR><Cmd>update<CR>', opts)
 
 map('i', '<C-s>', '<Esc>:lua vim.lsp.buf.format()<CR><Cmd>update<CR>', opts)
 
---Sets Ctrl + q to close tab, quit if last tab
+--Sets Ctrl + q to close buffer (and quit if last buffer)
 map('n', '<C-q>', function()
-	if #vim.fn.getbufinfo({ buflisted = 1 }) <= 1 then
+	if #vim.fn.getbufinfo({buflisted = 1}) <= 1 then
 		vim.cmd('quit')
 	else
 		vim.cmd('BufferClose')
