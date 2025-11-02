@@ -2,7 +2,7 @@
 
 -- NOTE: Note -- NOTE:
 -- TODO: Todo -- TODO:
--- FIXME: Fix me --FIXME:
+-- FIXME: Fix me -- FIXME:
 -- WARNING: Warning -- WARNING:
 
 --For jumping between split-windows do Ctrl+w w, it will jump to next windows or do Ctrl + hjkl to go to specific
